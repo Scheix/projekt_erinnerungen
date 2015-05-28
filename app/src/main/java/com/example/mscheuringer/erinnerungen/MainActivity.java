@@ -40,6 +40,8 @@ public class MainActivity extends Activity {
         registerForContextMenu(findViewById(R.id.listView));
         loadData();
         displayItems();
+
+        //alsdjflsadjf lskdj flöks djfksd flk
     }
 
 
