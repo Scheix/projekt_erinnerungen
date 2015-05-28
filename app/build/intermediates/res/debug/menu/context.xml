@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/delete" android:title="Loeschen"
+        android:orderInCategory="100"/>
+    <item android:id="@+id/sdf" android:title="sdf"
+        android:orderInCategory="100"/>
+</menu><!-- From: file:/C:/Users/Michael/Desktop/Eigene%20Dateien/Schule/3.Klasse/Programmieren/Programme/Erinnerungen/app/src/main/res/menu/context.xml -->

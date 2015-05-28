@@ -1,0 +1,4 @@
+C:\Users\Michael\Desktop\Eigene Dateien\Schule\3.Klasse\Programmieren\Programme\Erinnerungen\app\build\intermediates\classes\debug
+C:\Users\Michael\Desktop\Eigene Dateien\Schule\3.Klasse\Programmieren\Programme\Erinnerungen\app\build\intermediates\pre-dexed\debug\slf4j-simple-1.6.1-e42be6ee5caae5144295d0903400a2f3bce5426d.jar
+C:\Users\Michael\Desktop\Eigene Dateien\Schule\3.Klasse\Programmieren\Programme\Erinnerungen\app\build\intermediates\pre-dexed\debug\slf4j-api-1.6.1-a1eb12c477c160c4063e822f041cb386068488d4.jar
+C:\Users\Michael\Desktop\Eigene Dateien\Schule\3.Klasse\Programmieren\Programme\Erinnerungen\app\build\intermediates\pre-dexed\debug\osmdroid-android-4.2-0fffbea42017d44bfc0e47a049b97890f095cdd2.jar
