@@ -17,6 +17,8 @@ import java.util.List;
  */
 public class MyAdapter extends ArrayAdapter <Erinnerung> {
 
+
+
     public MyAdapter(Context context, int resource, int textViewResourceId, List objects) {
         super(context, resource, textViewResourceId, objects);
     }
@@ -27,12 +29,12 @@ public class MyAdapter extends ArrayAdapter <Erinnerung> {
         LayoutInflater inflator = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View v = inflator.inflate(R.layout.list_layout, parent, false);
 
-        String [] from = new String[] {ErinnerungTbl.Titel, ErinnerungTbl.Date};
+        Erinnerung erinnerung = this.getItem(position);
         CheckBox check = (CheckBox) v.findViewById(R.id.lblTitel);
         TextView text = (TextView) v.findViewById(R.id.lblTime);
 
-        text.setText(from[0]);
-        check.setText(from[1]);
+        text.setText(erinnerung.date);
+        check.setText(erinnerung.title);
 
         return v;
     }

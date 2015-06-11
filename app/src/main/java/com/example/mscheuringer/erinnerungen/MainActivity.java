@@ -29,7 +29,9 @@ public class MainActivity extends Activity {
 
     ListView view;
     List<Erinnerung> list = new ArrayList<Erinnerung>();
+    List<Erinnerung> done = new ArrayList<Erinnerung>();
     private static final int REQUEST_CODE = 666;
+    private static final int REQUEST_CODE2 = 555;
     private static int LIST_COUNTER = 0;
 
     @Override
@@ -40,8 +42,6 @@ public class MainActivity extends Activity {
         registerForContextMenu(findViewById(R.id.listView));
         loadData();
         displayItems();
-
-        //alsdjflsadjf lskdj flöks djfksd flk
     }
 
 
@@ -84,21 +84,20 @@ public class MainActivity extends Activity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-        if(resultCode == Activity.RESULT_OK)
+        if(resultCode == REQUEST_CODE)
         {
             Bundle params = data.getExtras();
 
             if (params != null)
             {
                 Erinnerung e = (Erinnerung) params.get("Erinnerung");
-                list.add(e);
                 insert(e);
+                loadData();
                 increase_counter();
                 displayItems();
             }
         }
-        else
-        {
+        else{
             Log.d("ERROR","A Failure accured !");
         }
 
@@ -108,6 +107,15 @@ public class MainActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
+        for (int i =0; i < list.size(); i++)
+        {
+            Erinnerung e = list.get(i);
+            if (e.erledigt == true)
+            {
+                done.add(e);
+                list.remove(i);
+            }
+        }
         increase_counter();
     }
 
@@ -140,9 +148,18 @@ public class MainActivity extends Activity {
             case R.id.delete:
                 delete(pos);
                 loadData();
+                increase_counter();
                 displayItems();
                 break;
-            case R.id.sdf:
+            case R.id.update:
+                update(erinnerung);
+                loadData();
+                displayItems();
+                break;
+            case R.id.detail:
+                Intent intent = new Intent(this, Detalis.class);
+                intent.putExtra("Erinnerung", erinnerung);
+                startActivityForResult(intent,REQUEST_CODE2);
                 break;
         }
         return super.onContextItemSelected(item);
@@ -189,30 +206,22 @@ public class MainActivity extends Activity {
         MySQLiteHelper helper = new MySQLiteHelper(this);
         SQLiteDatabase db = helper.getWritableDatabase();
 
-        String erledigt;
-        if (e.erledigt == true)
-        {
-            erledigt = "true";
-        }
-        else
-        {
-            erledigt = "flase";
-        }
-
         ContentValues values = new ContentValues();
         values.put("Titel", e.title);
         values.put("Notiz", e.note);
         values.put("Date", e.date);
-        values.put("Erledigt", erledigt);
+        values.put("Erledigt", "false");
 
         long insertedID = db.insert("Erinnerungen", null, values);
         db.close();
     }
 
-    public void update(Erinnerung e, int pos)
+    public void update(Erinnerung e)
     {
         MySQLiteHelper helper = new MySQLiteHelper(this);
         SQLiteDatabase db = helper.getWritableDatabase();
+
+        String title = e.title;
 
         ContentValues values = new ContentValues();
         values.put("Titel", e.title);
@@ -220,7 +229,11 @@ public class MainActivity extends Activity {
         values.put("Date", e.date);
         values.put("Erledigt", e.erledigt);
 
-        long nrUpdated = db.update("Erinnerungen", values, "ID=?", new String[]{""+pos});
+        SQLiteDatabase db2 = helper.getReadableDatabase();
+        Cursor rows = db2.query("Erinnerungen",new String[]{"ID"},"Titel=?",new String[]{""+title},null,null,null);
+        int id = rows.getInt(0);
+
+        long nrUpdated = db.update("Erinnerungen", values, "ID=?", new String[]{""+id});
         db.close();
     }
 }
