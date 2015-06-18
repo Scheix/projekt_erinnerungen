@@ -32,6 +32,7 @@ public class MainActivity extends Activity {
     List<Erinnerung> done = new ArrayList<Erinnerung>();
     private static final int REQUEST_CODE = 666;
     private static final int REQUEST_CODE2 = 555;
+    private static final int REQUEST_CODE3 = 444;
     private static int LIST_COUNTER = 0;
 
     @Override
@@ -39,7 +40,7 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         view = (ListView) findViewById(R.id.listView);
-        registerForContextMenu(findViewById(R.id.listView));
+        registerForContextMenu(view);
         loadData();
         displayItems();
     }
@@ -69,8 +70,6 @@ public class MainActivity extends Activity {
 
     public void displayItems ()
     {
-        //String [] from = new String[] {ErinnerungTbl.Titel, ErinnerungTbl.Date};
-        //int[] to = new int[] {R.id.lblTitel, R.id.lblTime};
         MyAdapter adapter = new MyAdapter(this,R.layout.list_layout, R.id.listView,list);
         view.setAdapter(adapter);
     }
@@ -97,7 +96,19 @@ public class MainActivity extends Activity {
                 displayItems();
             }
         }
-        else{
+        else if (resultCode == REQUEST_CODE3){
+            Bundle params = data.getExtras();
+
+            if (params != null)
+            {
+                Erinnerung e = (Erinnerung) params.get("Erinnerung");
+                update(e);
+                loadData();
+                displayItems();
+            }
+        }
+        else
+        {
             Log.d("ERROR","A Failure accured !");
         }
 
@@ -129,6 +140,7 @@ public class MainActivity extends Activity {
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
+        Log.d("INFO","onCreateContextMenu");
         getMenuInflater().inflate(R.menu.context,menu);
     }
 
@@ -146,20 +158,20 @@ public class MainActivity extends Activity {
 
         switch(id){
             case R.id.delete:
-                delete(pos);
+                delete(erinnerung);
                 loadData();
                 increase_counter();
                 displayItems();
                 break;
             case R.id.update:
-                update(erinnerung);
-                loadData();
-                displayItems();
+                Intent i = new Intent(this, Update.class);
+                i.putExtra("Erinnerung", erinnerung);
+                startActivityForResult(i, REQUEST_CODE3);
                 break;
             case R.id.detail:
                 Intent intent = new Intent(this, Detalis.class);
                 intent.putExtra("Erinnerung", erinnerung);
-                startActivityForResult(intent,REQUEST_CODE2);
+                startActivityForResult(intent, REQUEST_CODE2);
                 break;
         }
         return super.onContextItemSelected(item);
@@ -193,12 +205,18 @@ public class MainActivity extends Activity {
         db.close();
     }
 
-    public void delete(int pos)
+    public void delete(Erinnerung e)
     {
         MySQLiteHelper helper = new MySQLiteHelper(this);
         SQLiteDatabase db = helper.getWritableDatabase();
 
-        long nrDeleted = db.delete("Erinnerungen", "ID=?", new String[]{""+pos});
+        String title = "";
+
+        SQLiteDatabase db2 = helper.getReadableDatabase();
+        Cursor rows = db2.query("Erinnerungen",new String[]{"ID"},"Titel='?'",new String[]{""+title},null,null,null);
+        int id = rows.getInt(0);
+
+        long nrDeleted = db.delete("Erinnerungen", "ID=?", new String[]{""+id});
     }
 
     public void insert (Erinnerung e)
@@ -230,7 +248,7 @@ public class MainActivity extends Activity {
         values.put("Erledigt", e.erledigt);
 
         SQLiteDatabase db2 = helper.getReadableDatabase();
-        Cursor rows = db2.query("Erinnerungen",new String[]{"ID"},"Titel=?",new String[]{""+title},null,null,null);
+        Cursor rows = db2.query("Erinnerungen",new String[]{"ID"},"Titel='?'",new String[]{""+title},null,null,null);
         int id = rows.getInt(0);
 
         long nrUpdated = db.update("Erinnerungen", values, "ID=?", new String[]{""+id});

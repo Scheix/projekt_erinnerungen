@@ -17,6 +17,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".Hinzufuegen"></activity>
+        <activity android:name=".Detalis"></activity>
+        <activity android:name=".Update"></activity>
     </application>
 
 </manifest>
