@@ -3,6 +3,7 @@ package com.example.mscheuringer.erinnerungen;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,6 +26,7 @@ public class Hinzufuegen extends Activity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.hinzufuegen);
+        Log.d("INFO", "Hinzufuegen-Acivity");
     }
 
 
@@ -52,6 +54,7 @@ public class Hinzufuegen extends Activity
 
     public void backToMain (final View source)
     {
+        Log.d("INFO","Hinzufuegen - backToMain");
         EditText t1 = (EditText) findViewById(R.id.editText);
         EditText t2 = (EditText) findViewById(R.id.editText2);
         DatePicker date = (DatePicker) findViewById(R.id.datePicker);
@@ -65,7 +68,7 @@ public class Hinzufuegen extends Activity
 
         String d = null;
 
-        SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy");
+        SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy");//("MM/dd/yyyy")
 
         if (calendar != null) {
             d = format.format(calendar.getTime());

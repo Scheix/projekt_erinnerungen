@@ -5,43 +5,64 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="Details:"
+        android:id="@+id/textView3"
+        android:textSize="28dip"
+        android:textColor="#ffff41bd" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:text="Titel"
         android:id="@+id/detailTitel"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
         android:textSize="28dip"
-        android:textColor="#ff000000" />
+        android:textColor="#ff000000"
+        android:layout_below="@+id/textView3"
+        android:layout_alignLeft="@+id/detailDate"
+        android:layout_alignStart="@+id/detailDate"
+        android:layout_marginTop="42dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Note"
         android:id="@+id/detailNote"
+        android:textSize="28dip"
+        android:textColor="#ff000000"
+        android:layout_marginTop="44dp"
+        android:autoText="false"
         android:layout_below="@+id/detailTitel"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:textSize="28dip"
-        android:textColor="#ff000000" />
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Date"
         android:id="@+id/detailDate"
+        android:textSize="28dip"
+        android:textColor="#ff000000"
+        android:layout_marginTop="40dp"
         android:layout_below="@+id/detailNote"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:textSize="28dip"
-        android:textColor="#ff000000" />
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Erledigt"
         android:id="@+id/detailErldedigt"
+        android:textColor="#ff000000"
         android:layout_below="@+id/detailDate"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:textColor="#ff000000" />
+        android:layout_marginTop="40dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 </RelativeLayout>

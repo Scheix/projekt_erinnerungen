@@ -34,9 +34,12 @@ public class Update extends Activity {
         TextView t2 = (TextView) findViewById(R.id.updateNote);
         DatePicker t3 = (DatePicker) findViewById(R.id.updateDate);
 
+        String d = e.date;
+        String [] a = d.split("/");
+
         t1.setText(e.title);
         t2.setText(e.note);
-
+        t3.updateDate(Integer.parseInt(a[0]), Integer.parseInt(a[1]), Integer.parseInt(a[2]));
     }
 
     public void backToMain (final View source)
@@ -57,7 +60,7 @@ public class Update extends Activity {
 
         String d = null;
 
-        SimpleDateFormat format = new SimpleDateFormat("MM.dd.yyyy");//("MM/dd/yyyy")
+        SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy");//("MM/dd/yyyy")
 
         if (calendar != null) {
             d = format.format(calendar.getTime());
@@ -66,7 +69,7 @@ public class Update extends Activity {
         Erinnerung erinnerung = new Erinnerung(t1.getText().toString(),t2.getText().toString(), d, erledigt);
 
         Intent intent = new Intent();
-        intent.putExtra("Erinnerung", e);
+        intent.putExtra("Erinnerung", erinnerung);
         setResult(Activity.RESULT_OK,intent);
         finish();
     }

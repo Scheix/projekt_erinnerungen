@@ -1,7 +1,11 @@
 package com.example.mscheuringer.erinnerungen;
 
 import android.app.Activity;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -20,7 +24,10 @@ import android.widget.Toast;
 
 import org.osmdroid.util.GeoPoint;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -42,7 +49,35 @@ public class MainActivity extends Activity {
         view = (ListView) findViewById(R.id.listView);
         registerForContextMenu(view);
         loadData();
+        analyse_list();
         displayItems();
+        /*for (int i = 0; i < list.size(); i++)
+        {
+            Erinnerung e = list.get(i);
+            String s1 = e.date;
+
+            Date d = new Date(System.currentTimeMillis());
+
+            int year = d.getYear();
+            int month = d.getMonth();
+            int day = d.getDay();
+
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(year, month, day);
+
+            String s2 = null;
+
+            SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy");//("MM/dd/yyyy")
+
+            if (calendar != null) {
+                s2 = format.format(calendar.getTime());
+            }
+
+            if (s1.equals(s2))
+            {
+                showInStatusBar();
+            }
+        }*/
     }
 
 
@@ -76,27 +111,31 @@ public class MainActivity extends Activity {
 
     public void hinzufuegen (final View source)
     {
+        Log.d("INFO","Hinzufuegen");
         Intent intent = new Intent(this, Hinzufuegen.class);
         startActivityForResult(intent,REQUEST_CODE);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-        if(resultCode == REQUEST_CODE)
+        Log.d("INFO","onActivityResult");
+        if(requestCode == REQUEST_CODE)
         {
+            Log.d("INFO","resultCode");
             Bundle params = data.getExtras();
 
             if (params != null)
             {
                 Erinnerung e = (Erinnerung) params.get("Erinnerung");
                 insert(e);
+                Log.d("INFO","Insert");
                 loadData();
+                analyse_list();
                 increase_counter();
                 displayItems();
             }
         }
-        else if (resultCode == REQUEST_CODE3){
+        else if (requestCode == REQUEST_CODE3){
             Bundle params = data.getExtras();
 
             if (params != null)
@@ -104,6 +143,7 @@ public class MainActivity extends Activity {
                 Erinnerung e = (Erinnerung) params.get("Erinnerung");
                 update(e);
                 loadData();
+                analyse_list();
                 displayItems();
             }
         }
@@ -118,6 +158,19 @@ public class MainActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
+        increase_counter();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        final NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        manager.cancel(333);
+    }
+
+    private void analyse_list ()
+    {
+        done.clear();
         for (int i =0; i < list.size(); i++)
         {
             Erinnerung e = list.get(i);
@@ -127,7 +180,6 @@ public class MainActivity extends Activity {
                 list.remove(i);
             }
         }
-        increase_counter();
     }
 
     private void increase_counter ()
@@ -160,6 +212,7 @@ public class MainActivity extends Activity {
             case R.id.delete:
                 delete(erinnerung);
                 loadData();
+                analyse_list();
                 increase_counter();
                 displayItems();
                 break;
@@ -210,13 +263,15 @@ public class MainActivity extends Activity {
         MySQLiteHelper helper = new MySQLiteHelper(this);
         SQLiteDatabase db = helper.getWritableDatabase();
 
-        String title = "";
-
         SQLiteDatabase db2 = helper.getReadableDatabase();
-        Cursor rows = db2.query("Erinnerungen",new String[]{"ID"},"Titel='?'",new String[]{""+title},null,null,null);
-        int id = rows.getInt(0);
-
+        Cursor rows = db2.query("Erinnerungen",new String[]{"ID"},"Titel=?",new String[]{""+e.title},null,null,null);
+        int id = 0;
+        if (rows.moveToNext()) {
+            id = rows.getInt(0);
+        }
         long nrDeleted = db.delete("Erinnerungen", "ID=?", new String[]{""+id});
+        rows.close();
+        db.close();
     }
 
     public void insert (Erinnerung e)
@@ -248,10 +303,55 @@ public class MainActivity extends Activity {
         values.put("Erledigt", e.erledigt);
 
         SQLiteDatabase db2 = helper.getReadableDatabase();
-        Cursor rows = db2.query("Erinnerungen",new String[]{"ID"},"Titel='?'",new String[]{""+title},null,null,null);
-        int id = rows.getInt(0);
+        Cursor rows = db2.query("Erinnerungen",new String[]{"ID"},"Titel=?",new String[]{""+title},null,null,null);
+        int id = 0;
+        if(rows.moveToNext()) {
+            id = rows.getInt(0);
+        }
 
         long nrUpdated = db.update("Erinnerungen", values, "ID=?", new String[]{""+id});
         db.close();
+        rows.close();
     }
+
+    private void showInStatusBar()
+    {
+        final NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        final Notification note = new Notification(
+                R.drawable.icon,
+                "Eine Erinnerung steht an !",
+                System.currentTimeMillis());
+        Intent i = new Intent(this, MainActivity.class);
+        final PendingIntent intent = PendingIntent.getActivity(
+                this,
+                0,
+                i,
+                0);
+        note.setLatestEventInfo(this, "Erinnerung", "Ich sollte Sie heute an etwas erinnern !", intent);
+        note.vibrate = new long[] {100,200};
+        manager.notify(333,note);
+    }
+
+    /*@Override
+    protected void onListItemClick(ListView l, View v, int position, long id) {
+        // TODO Auto-generated method stub
+        super.onListItemClick(l, v, position, id);
+        RadioButton b = (RadioButton)findViewById(R.id.radioButton1);
+        String action;
+        int pos  = position;
+        if (b.isChecked())
+        {
+            action = "Anruf";
+        }
+        else
+        {
+            action = "Karte";
+        }
+        Intent intent = new Intent(this, com.example.kontakte.Menu.class);
+        intent.putExtra("ArrayList", kontakte);
+        intent.putExtra("Action", action);
+        intent.putExtra("ID", pos);
+        startActivity(intent);
+    }*/
+
 }

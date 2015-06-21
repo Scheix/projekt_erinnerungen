@@ -32,6 +32,11 @@ public class Detalis extends Activity {
         t1.setText(e.title);
         t2.setText(e.note);
         t3.setText(e.date);
-        t4.setText(""+e.erledigt);
+        if (e.erledigt == false) {
+            t4.setText("Noch ausständig !");
+        }
+        else {
+            t4.setText("Erledigt !");
+        }
     }
 }

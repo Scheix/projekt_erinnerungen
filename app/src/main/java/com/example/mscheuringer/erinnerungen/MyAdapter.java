@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.Adapter;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import java.util.List;
@@ -28,9 +29,16 @@ public class MyAdapter extends ArrayAdapter <Erinnerung> implements View.OnCreat
         Context ctx = parent.getContext();
         LayoutInflater inflator = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View v = inflator.inflate(R.layout.list_layout, parent, false);
-        Erinnerung erinnerung = this.getItem(position);
+        final Erinnerung erinnerung = this.getItem(position);
         TextView titel = (TextView) v.findViewById(R.id.lblTitle);
         TextView text = (TextView) v.findViewById(R.id.lblTime);
+        CheckBox checkBox = (CheckBox) v.findViewById(R.id.checkbox);
+        checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                erinnerung.erledigt = isChecked;
+            }
+        });
 
         text.setText(erinnerung.date);
         titel.setText(erinnerung.title);
