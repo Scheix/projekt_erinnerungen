@@ -68,7 +68,7 @@ public class Hinzufuegen extends Activity
 
         String d = null;
 
-        SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy");//("MM/dd/yyyy")
+        SimpleDateFormat format = new SimpleDateFormat("dd MMM yyyy");//("MM/dd/yyyy")
 
         if (calendar != null) {
             d = format.format(calendar.getTime());

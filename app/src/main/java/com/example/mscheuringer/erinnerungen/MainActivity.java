@@ -119,37 +119,37 @@ public class MainActivity extends Activity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         Log.d("INFO","onActivityResult");
-        if(requestCode == REQUEST_CODE)
-        {
-            Log.d("INFO","resultCode");
-            Bundle params = data.getExtras();
+        Log.d("INFO","onActivityResult CODE: "+requestCode);
 
-            if (params != null)
-            {
-                Erinnerung e = (Erinnerung) params.get("Erinnerung");
-                insert(e);
-                Log.d("INFO","Insert");
-                loadData();
-                analyse_list();
-                increase_counter();
-                displayItems();
-            }
-        }
-        else if (requestCode == REQUEST_CODE3){
-            Bundle params = data.getExtras();
+        if (data != null) {
+            if (requestCode == REQUEST_CODE) {
+                Log.d("INFO", "resultCode");
+                Bundle params = data.getExtras();
 
-            if (params != null)
-            {
-                Erinnerung e = (Erinnerung) params.get("Erinnerung");
-                update(e);
-                loadData();
-                analyse_list();
-                displayItems();
+                if (params != null) {
+                    Erinnerung e = (Erinnerung) params.get("Erinnerung");
+                    insert(e);
+                    Log.d("INFO", "Insert");
+                    loadData();
+                    analyse_list();
+                    increase_counter();
+                    displayItems();
+                }
+            } else if (requestCode == REQUEST_CODE3) {
+                Bundle params = data.getExtras();
+
+                if (params != null) {
+                    Erinnerung e_neu = (Erinnerung) params.get("Erinnerung-Neu");
+                    Erinnerung e_alt = (Erinnerung) params.get("Erinnerung-Alt");
+                    update(e_neu, e_alt);
+                    loadData();
+                    analyse_list();
+                    displayItems();
+                    Log.d("INFO", "onActivityResult--update");
+                }
+            } else {
+                Log.d("ERROR", "A Failure accured !");
             }
-        }
-        else
-        {
-            Log.d("ERROR","A Failure accured !");
         }
 
         super.onActivityResult(requestCode, resultCode, data);
@@ -289,29 +289,38 @@ public class MainActivity extends Activity {
         db.close();
     }
 
-    public void update(Erinnerung e)
+    public void update(Erinnerung e_neu, Erinnerung e_alt)
     {
+        String erledigt = "";
+        if (e_neu.erledigt == false)
+        {
+            erledigt = "false";
+        }
+        else
+        {
+            erledigt = "true";
+        }
         MySQLiteHelper helper = new MySQLiteHelper(this);
         SQLiteDatabase db = helper.getWritableDatabase();
 
-        String title = e.title;
-
         ContentValues values = new ContentValues();
-        values.put("Titel", e.title);
-        values.put("Notiz", e.note);
-        values.put("Date", e.date);
-        values.put("Erledigt", e.erledigt);
+        values.put("Titel", e_neu.title);
+        values.put("Notiz", e_neu.note);
+        values.put("Date", e_neu.date);
+        values.put("Erledigt", erledigt);
 
         SQLiteDatabase db2 = helper.getReadableDatabase();
-        Cursor rows = db2.query("Erinnerungen",new String[]{"ID"},"Titel=?",new String[]{""+title},null,null,null);
+        Cursor rows = db2.query(ErinnerungTbl.TABLE_NAME,new String[]{"ID"},"Titel=?",new String[]{""+e_alt.title},null,null,null);
         int id = 0;
         if(rows.moveToNext()) {
             id = rows.getInt(0);
         }
+        Log.d("INFO","update-method id:"+id);
 
         long nrUpdated = db.update("Erinnerungen", values, "ID=?", new String[]{""+id});
-        db.close();
+        Log.d("INFO","update-done");
         rows.close();
+        db.close();
     }
 
     private void showInStatusBar()

@@ -19,7 +19,8 @@
         android:layout_height="wrap_content"
         android:text="Titel:"
 
-        android:textSize="20dip" />
+        android:textSize="20dip"
+        android:id="@+id/upt1" />
 
     <EditText
         android:layout_width="match_parent"
@@ -29,7 +30,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Tabesabhängige Erinnerung:"
-        android:textSize="20dip" />
+        android:textSize="20dip"
+        android:id="@+id/upt2" />
 
     <DatePicker
         android:layout_width="wrap_content"
@@ -42,7 +44,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Notitz:"
-        android:textSize="20dip" />
+        android:textSize="20dip"
+        android:id="@+id/upt3" />
 
     <EditText
         android:layout_width="match_parent"

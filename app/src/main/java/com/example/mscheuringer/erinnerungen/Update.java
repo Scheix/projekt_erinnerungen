@@ -3,10 +3,13 @@ package com.example.mscheuringer.erinnerungen;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.TextView;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
@@ -16,11 +19,10 @@ import java.util.Calendar;
 public class Update extends Activity {
 
     Erinnerung e;
-    boolean erledigt;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.details);
+        setContentView(R.layout.update);
 
         Intent intent = getIntent();
         Bundle params = intent.getExtras();
@@ -28,26 +30,36 @@ public class Update extends Activity {
         if (params != null)
         {
             e = (Erinnerung) params.get("Erinnerung");
+            Log.d("INFO","Update-Activity, Object(Erinnerung)-Recieved");
+            Log.d("INFO","Update-Activity, "+e.title);
         }
 
-        TextView t1 = (TextView) findViewById(R.id.updateTitel);
-        TextView t2 = (TextView) findViewById(R.id.updateNote);
+        EditText t1 = (EditText) findViewById(R.id.updateTitel);
+        EditText t2 = (EditText) findViewById(R.id.updateNote);
         DatePicker t3 = (DatePicker) findViewById(R.id.updateDate);
 
-        String d = e.date;
-        String [] a = d.split("/");
+        SimpleDateFormat format = new SimpleDateFormat("dd MMM yyyy");
+
+        try {
+            format.parse(e.date);
+        } catch (ParseException e1) {
+            e1.printStackTrace();
+        }
+
+        Calendar calc = format.getCalendar();
+        int year = calc.get(Calendar.YEAR);
+        int month = calc.get(Calendar.MONTH);
+        int day = calc.get(Calendar.DAY_OF_MONTH);
 
         t1.setText(e.title);
         t2.setText(e.note);
-        t3.updateDate(Integer.parseInt(a[0]), Integer.parseInt(a[1]), Integer.parseInt(a[2]));
+        t3.updateDate(year, month, day);
     }
 
     public void backToMain (final View source)
     {
-        TextView t1 = (TextView) findViewById(R.id.updateTitel);
-        TextView t2 = (TextView) findViewById(R.id.updateNote);
-
-        erledigt = e.erledigt;
+        EditText t1 = (EditText) findViewById(R.id.updateTitel);
+        EditText t2 = (EditText) findViewById(R.id.updateNote);
 
         DatePicker date = (DatePicker) findViewById(R.id.updateDate);
 
@@ -60,17 +72,18 @@ public class Update extends Activity {
 
         String d = null;
 
-        SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy");//("MM/dd/yyyy")
+        SimpleDateFormat format = new SimpleDateFormat("dd MMM yyyy");//("MM/dd/yyyy")
 
         if (calendar != null) {
             d = format.format(calendar.getTime());
         }
 
-        Erinnerung erinnerung = new Erinnerung(t1.getText().toString(),t2.getText().toString(), d, erledigt);
+        Erinnerung erinnerung = new Erinnerung(t1.getText().toString(),t2.getText().toString(), d, e.erledigt);
 
         Intent intent = new Intent();
-        intent.putExtra("Erinnerung", erinnerung);
-        setResult(Activity.RESULT_OK,intent);
+        intent.putExtra("Erinnerung-Neu", erinnerung);
+        intent.putExtra("Erinnerung-Alt", e);
+        setResult(Activity.RESULT_OK, intent);
         finish();
     }
 }
